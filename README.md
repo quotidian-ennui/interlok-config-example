@@ -1,1 +1,1 @@
-# mustached-avenger
+# adapter-git-config
