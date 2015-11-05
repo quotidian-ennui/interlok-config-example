@@ -1,10 +1,5 @@
-<!--
-
- Please refer to Javadocs for additional config information.
-
--->
 <adapter>
-	<unique-id>FS-FS-Adapter</unique-id>
+	<unique-id>FS-FS-Adapter(staging)</unique-id>
 	
 	<channel-list>
 		<channel>
