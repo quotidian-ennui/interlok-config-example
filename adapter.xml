@@ -1,0 +1,261 @@
+<?xml version="1.0"?>
+<!--
+In order to use this adapter; you must download jruby from www.jruby.org
+and put it in the lib directory.
+
+Also, note that in the bootstrap.properties we have set the system property
+org.jruby.embed.localcontext.scope=threadsafe
+-->
+<adapter>
+  <unique-id>MyInterlokInstance</unique-id>
+  <heartbeat-event-interval>
+    <unit>MINUTES</unit>
+    <interval>60</interval>
+  </heartbeat-event-interval>
+  <message-error-digester class="standard-message-error-digester">
+    <unique-id>ErrorDigest</unique-id>
+  </message-error-digester>
+  <channel-list>
+    <channel>
+      <auto-start>true</auto-start>
+      <unique-id>WebServer</unique-id>
+      <produce-connection class="null-connection" />
+      <consume-connection class="jetty-embedded-connection" />
+      <workflow-list>
+        <standard-workflow>
+          <unique-id>HandleProductCodeLookup</unique-id>
+          <consumer class="jetty-message-consumer">
+            <destination class="configured-consume-destination">
+              <destination>/products/lookup</destination>
+              <configured-thread-name>HandleProductLookup</configured-thread-name>
+            </destination>
+          </consumer>
+          <service-collection class="service-list">
+            <services>
+              <generate-unique-metadata-value-service>
+                <unique-id>GenerateUniqueMetadata</unique-id>
+                <metadata-key>ProductCode</metadata-key>
+              </generate-unique-metadata-value-service>
+              <payload-from-metadata-service>
+                <template><![CDATA[Code=__ProductCode__]]></template>
+                <metadata-tokens>
+                  <key-value-pair>
+                    <key>ProductCode</key>
+                    <value>__ProductCode__</value>
+                  </key-value-pair>
+                </metadata-tokens>
+              </payload-from-metadata-service>
+              <standalone-producer>
+                <unique-id>SendResponse</unique-id>
+                <producer class="jetty-response-producer">
+                  <http-response-code>200</http-response-code>
+                  <send-payload>true</send-payload>
+                </producer>
+              </standalone-producer>
+            </services>
+          </service-collection>
+        </standard-workflow>
+
+        <standard-workflow>
+          <unique-id>HandleProductMovement</unique-id>
+          <consumer class="jetty-message-consumer">
+            <destination class="configured-consume-destination">
+              <destination>/products/movement</destination>
+              <configured-thread-name>HandleProductMovement</configured-thread-name>
+            </destination>
+          </consumer>
+          <service-collection class="service-list">
+            <services>
+              <generate-unique-metadata-value-service>
+                <unique-id>GenerateUniqueMetadata</unique-id>
+                <metadata-key>ProductMovementTransactionId</metadata-key>
+              </generate-unique-metadata-value-service>
+              <payload-from-metadata-service>
+                <unique-id>GenerateTransactionId</unique-id>
+                <template><![CDATA[Code=__ProductMovementTransactionId__]]></template>
+                <metadata-tokens>
+                  <key-value-pair>
+                    <key>ProductMovementTransactionId</key>
+                    <value>__ProductMovementTransactionId__</value>
+                  </key-value-pair>
+                </metadata-tokens>
+              </payload-from-metadata-service>
+              <standalone-producer>
+                <unique-id>SendResponse</unique-id>
+                <producer class="jetty-response-producer">
+                  <http-response-code>200</http-response-code>
+                  <send-payload>true</send-payload>
+                </producer>
+              </standalone-producer>
+            </services>
+          </service-collection>
+        </standard-workflow>
+
+
+        <standard-workflow>
+          <unique-id>HandleProductRecall</unique-id>
+          <consumer class="jetty-message-consumer">
+            <destination class="configured-consume-destination">
+              <destination>/products/recall</destination>
+              <configured-thread-name>HandleProductRecall</configured-thread-name>
+            </destination>
+          </consumer>
+          <service-collection class="service-list">
+            <services>
+              <generate-unique-metadata-value-service>
+                <unique-id>GenerateUniqueMetadata</unique-id>
+                <metadata-key>ProductRecallTransactionId</metadata-key>
+              </generate-unique-metadata-value-service>
+              <payload-from-metadata-service>
+                <unique-id>GenerateTransactionId</unique-id>
+                <template><![CDATA[Code=__ProductRecallTransactionId__]]></template>
+                <metadata-tokens>
+                  <key-value-pair>
+                    <key>ProductRecallTransactionId</key>
+                    <value>__ProductRecallTransactionId__</value>
+                  </key-value-pair>
+                </metadata-tokens>
+              </payload-from-metadata-service>
+              <standalone-producer>
+                <unique-id>SendResponse</unique-id>
+                <producer class="jetty-response-producer">
+                  <http-response-code>200</http-response-code>
+                  <send-payload>true</send-payload>
+                </producer>
+              </standalone-producer>
+
+            </services>
+          </service-collection>
+        </standard-workflow>
+
+
+        <standard-workflow>
+          <unique-id>DefaultURL</unique-id>
+          <consumer class="jetty-message-consumer">
+            <destination class="configured-consume-destination">
+              <destination>/products/*</destination>
+              <configured-thread-name>DefaultURL</configured-thread-name>
+            </destination>
+          </consumer>
+          <service-collection class="service-list">
+            <services>
+              <payload-from-metadata-service>
+                <unique-id>GenerateResult</unique-id>
+                <template><![CDATA[URL Not Found]]></template>
+              </payload-from-metadata-service>
+              <log-message-service>
+                <unique-id>LogMessage</unique-id>
+              </log-message-service>
+            </services>
+          </service-collection>
+          <producer class="jetty-response-producer">
+            <http-response-code>404</http-response-code>
+            <send-payload>true</send-payload>
+          </producer>
+        </standard-workflow>
+      </workflow-list>
+    </channel>
+
+    <channel>
+      <auto-start>true</auto-start>
+      <unique-id>WebClient</unique-id>
+      <produce-connection class="null-connection" />
+      <consume-connection class="null-connection" />
+      <workflow-list>
+        <standard-workflow>
+          <unique-id>ProductLookup</unique-id>
+          <consumer class="polling-trigger">
+            <destination class="configured-consume-destination">
+              <configured-thread-name>ProductLookup</configured-thread-name>
+            </destination>
+            <template>Message triggered by ProductLookup</template>
+            <poller class="quartz-cron-poller">
+              <cron-expression>*/7 * * * * ?</cron-expression>
+            </poller>
+          </consumer>
+          <service-collection class="service-list">
+            <services>
+              <service class="embedded-scripting-service">
+                <unique-id>SetMessageType</unique-id>
+                <script><![CDATA[
+                  # Select a message-type from the valid list
+                  msgtype_index = rand(3);
+                  msg_types = Array[ "PRODUCT_LOOKUP", "PRODUCT_MOVEMENT", "PRODUCT_RECALL" ]
+                  msg_datas = Array[ "Product Lookup", "Product has moved somewhere", "Product is damaged"]
+                  messageType = msg_types.at(msgtype_index);
+                  msg_data = msg_datas.at(msgtype_index);
+
+                  $message.addMetadata('messageType', messageType);
+                  $message.setStringPayload(msg_data);
+
+                ]]></script>
+                <language>jruby</language>
+              </service>
+              <generate-unique-metadata-value-service>
+                <unique-id>GenerateUniqueMetadata</unique-id>
+              </generate-unique-metadata-value-service>
+              <branching-service-collection>
+                <unique-id>ProductLookup</unique-id>
+                <first-service-id>CheckMessageType</first-service-id>
+                <services>
+                  <metadata-value-branching-service>
+                    <unique-id>CheckMessageType</unique-id>
+                    <metadata-key>messageType</metadata-key>
+                    <default-service-id>PRODUCT_MOVEMENT</default-service-id>
+                    <value-matcher class="use-key-as-service-id-value-matcher"/>
+                    <metadata-to-service-id-mappings/>
+                  </metadata-value-branching-service>
+                  <service-list>
+                    <unique-id>PRODUCT_MOVEMENT</unique-id>
+                    <services>
+                      <add-metadata-service>
+                        <metadata-element>
+                          <key>product_url</key>
+                          <value>http://localhost:8080/products/movement</value>
+                        </metadata-element>
+                      </add-metadata-service>
+                    </services>
+                  </service-list>
+                  <service-list>
+                    <unique-id>PRODUCT_RECALL</unique-id>
+                    <services>
+                      <add-metadata-service>
+                        <metadata-element>
+                          <key>product_url</key>
+                          <value>http://localhost:8080/products/recall</value>
+                        </metadata-element>
+                      </add-metadata-service>
+                    </services>
+                  </service-list>
+                  <service-list>
+                    <unique-id>PRODUCT_LOOKUP</unique-id>
+                    <services>
+                      <add-metadata-service>
+                        <metadata-element>
+                          <key>product_url</key>
+                          <value>http://localhost:8080/products/lookup</value>
+                        </metadata-element>
+                      </add-metadata-service>
+                    </services>
+                  </service-list>
+                </services>
+              </branching-service-collection>
+              <standalone-requestor>
+                <producer class="jdk-http-producer">
+                  <destination class="metadata-destination">
+                    <key>product_url</key>
+                  </destination>
+                  <method>POST</method>
+                </producer>
+              </standalone-requestor>
+              <log-message-service>
+                <unique-id>LogProductRequest</unique-id>
+              </log-message-service>
+            </services>
+          </service-collection>
+        </standard-workflow>
+      </workflow-list>
+    </channel>
+
+  </channel-list>
+</adapter>
