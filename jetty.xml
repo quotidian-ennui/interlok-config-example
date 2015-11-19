@@ -123,7 +123,7 @@
         <Arg>
           <New class="org.eclipse.jetty.deploy.providers.WebAppProvider">
             <Set name="monitoredDirName"><Property name="jetty.home" default="." />/webapps</Set>
-            <Set name="defaultsDescriptor"><Property name="jetty.home" default="."/>/config/svn-config/webdefault.xml</Set>
+            <Set name="defaultsDescriptor"><Property name="jetty.home" default="."/>/config/interlok-config-example/webdefault.xml</Set>
             <Set name="scanInterval">120</Set>
             <Set name="extractWars">true</Set>
             <Set name="configurationClasses"><Ref id="plusConfig" /></Set> <!-- add for jndi -->
