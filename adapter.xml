@@ -47,8 +47,12 @@ org.jruby.embed.localcontext.scope=threadsafe
               </payload-from-metadata-service>
               <standalone-producer>
                 <unique-id>SendResponse</unique-id>
-                <producer class="jetty-response-producer">
-                  <http-response-code>200</http-response-code>
+                <producer class="jetty-standard-response-producer">
+                  <status-provider class="http-configured-status">
+                    <status>OK_200</status>
+                  </status-provider>
+                  <response-header-provider class="jetty-no-response-headers"/>
+                  <content-type-provider class="http-configured-content-type-provider"/>
                   <send-payload>true</send-payload>
                 </producer>
               </standalone-producer>
@@ -82,8 +86,12 @@ org.jruby.embed.localcontext.scope=threadsafe
               </payload-from-metadata-service>
               <standalone-producer>
                 <unique-id>SendResponse</unique-id>
-                <producer class="jetty-response-producer">
-                  <http-response-code>200</http-response-code>
+                <producer class="jetty-standard-response-producer">
+                  <status-provider class="http-configured-status">
+                    <status>OK_200</status>
+                  </status-provider>
+                  <response-header-provider class="jetty-no-response-headers"/>
+                  <content-type-provider class="http-configured-content-type-provider"/>
                   <send-payload>true</send-payload>
                 </producer>
               </standalone-producer>
@@ -118,8 +126,12 @@ org.jruby.embed.localcontext.scope=threadsafe
               </payload-from-metadata-service>
               <standalone-producer>
                 <unique-id>SendResponse</unique-id>
-                <producer class="jetty-response-producer">
-                  <http-response-code>200</http-response-code>
+                <producer class="jetty-standard-response-producer">
+                  <status-provider class="http-configured-status">
+                    <status>OK_200</status>
+                  </status-provider>
+                  <response-header-provider class="jetty-no-response-headers"/>
+                  <content-type-provider class="http-configured-content-type-provider"/>
                   <send-payload>true</send-payload>
                 </producer>
               </standalone-producer>
@@ -148,10 +160,15 @@ org.jruby.embed.localcontext.scope=threadsafe
               </log-message-service>
             </services>
           </service-collection>
-          <producer class="jetty-response-producer">
-            <http-response-code>404</http-response-code>
-            <send-payload>true</send-payload>
-          </producer>
+                <producer class="jetty-standard-response-producer">
+                  <status-provider class="http-configured-status">
+                    <status>NOT_FOUND_404</status>
+                  </status-provider>
+                  <response-header-provider class="jetty-no-response-headers"/>
+                  <content-type-provider class="http-configured-content-type-provider"/>
+                  <send-payload>true</send-payload>
+                </producer>
+
         </standard-workflow>
       </workflow-list>
     </channel>
@@ -241,11 +258,10 @@ org.jruby.embed.localcontext.scope=threadsafe
                 </services>
               </branching-service-collection>
               <standalone-requestor>
-                <producer class="jdk-http-producer">
+                <producer class="standard-http-producer">
                   <destination class="metadata-destination">
                     <key>product_url</key>
                   </destination>
-                  <method>POST</method>
                 </producer>
               </standalone-requestor>
               <log-message-service>
