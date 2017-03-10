@@ -16,7 +16,7 @@ Also, note that in the bootstrap.properties we have set the system property org.
   </message-error-digester>
   <channel-list>
     <channel>
-      <auto-start>true</auto-start>
+      <auto-start>false</auto-start>
       <unique-id>WebServer</unique-id>
       <produce-connection class="null-connection" />
       <consume-connection class="jetty-http-connection">
@@ -175,7 +175,7 @@ Also, note that in the bootstrap.properties we have set the system property org.
       </workflow-list>
     </channel>
     <channel>
-      <auto-start>true</auto-start>
+      <auto-start>false</auto-start>
       <unique-id>WebClient</unique-id>
       <produce-connection class="null-connection" />
       <consume-connection class="null-connection" />
