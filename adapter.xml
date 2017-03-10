@@ -3,11 +3,10 @@
 In order to use this adapter; you must download jruby from www.jruby.org
 and put it in the lib directory.
 
-Also, note that in the bootstrap.properties we have set the system property
-org.jruby.embed.localcontext.scope=threadsafe
+Also, note that in the bootstrap.properties we have set the system property org.jruby.embed.localcontext.scope=threadsafe
 -->
 <adapter>
-  <unique-id>MyInterlokInstance</unique-id>
+  <unique-id>vcs-git-instance</unique-id>
   <heartbeat-event-interval>
     <unit>MINUTES</unit>
     <interval>60</interval>
@@ -20,7 +19,9 @@ org.jruby.embed.localcontext.scope=threadsafe
       <auto-start>true</auto-start>
       <unique-id>WebServer</unique-id>
       <produce-connection class="null-connection" />
-      <consume-connection class="jetty-embedded-connection" />
+      <consume-connection class="jetty-http-connection">
+        <port>8082</port>
+      </consume-connection>
       <workflow-list>
         <standard-workflow>
           <unique-id>HandleProductCodeLookup</unique-id>
@@ -37,7 +38,9 @@ org.jruby.embed.localcontext.scope=threadsafe
                 <metadata-key>ProductCode</metadata-key>
               </generate-unique-metadata-value-service>
               <payload-from-metadata-service>
-                <template><![CDATA[Code=__ProductCode__]]></template>
+                <template>
+                  <![CDATA[Code=__ProductCode__]]>
+                </template>
                 <metadata-tokens>
                   <key-value-pair>
                     <key>ProductCode</key>
@@ -59,7 +62,6 @@ org.jruby.embed.localcontext.scope=threadsafe
             </services>
           </service-collection>
         </standard-workflow>
-
         <standard-workflow>
           <unique-id>HandleProductMovement</unique-id>
           <consumer class="jetty-message-consumer">
@@ -76,7 +78,9 @@ org.jruby.embed.localcontext.scope=threadsafe
               </generate-unique-metadata-value-service>
               <payload-from-metadata-service>
                 <unique-id>GenerateTransactionId</unique-id>
-                <template><![CDATA[Code=__ProductMovementTransactionId__]]></template>
+                <template>
+                  <![CDATA[Code=__ProductMovementTransactionId__]]>
+                </template>
                 <metadata-tokens>
                   <key-value-pair>
                     <key>ProductMovementTransactionId</key>
@@ -98,8 +102,6 @@ org.jruby.embed.localcontext.scope=threadsafe
             </services>
           </service-collection>
         </standard-workflow>
-
-
         <standard-workflow>
           <unique-id>HandleProductRecall</unique-id>
           <consumer class="jetty-message-consumer">
@@ -116,7 +118,9 @@ org.jruby.embed.localcontext.scope=threadsafe
               </generate-unique-metadata-value-service>
               <payload-from-metadata-service>
                 <unique-id>GenerateTransactionId</unique-id>
-                <template><![CDATA[Code=__ProductRecallTransactionId__]]></template>
+                <template>
+                  <![CDATA[Code=__ProductRecallTransactionId__]]>
+                </template>
                 <metadata-tokens>
                   <key-value-pair>
                     <key>ProductRecallTransactionId</key>
@@ -135,12 +139,9 @@ org.jruby.embed.localcontext.scope=threadsafe
                   <send-payload>true</send-payload>
                 </producer>
               </standalone-producer>
-
             </services>
           </service-collection>
         </standard-workflow>
-
-
         <standard-workflow>
           <unique-id>DefaultURL</unique-id>
           <consumer class="jetty-message-consumer">
@@ -153,26 +154,26 @@ org.jruby.embed.localcontext.scope=threadsafe
             <services>
               <payload-from-metadata-service>
                 <unique-id>GenerateResult</unique-id>
-                <template><![CDATA[URL Not Found]]></template>
+                <template>
+                  <![CDATA[URL Not Found]]>
+                </template>
               </payload-from-metadata-service>
               <log-message-service>
                 <unique-id>LogMessage</unique-id>
               </log-message-service>
             </services>
           </service-collection>
-                <producer class="jetty-standard-response-producer">
-                  <status-provider class="http-configured-status">
-                    <status>NOT_FOUND_404</status>
-                  </status-provider>
-                  <response-header-provider class="jetty-no-response-headers"/>
-                  <content-type-provider class="http-configured-content-type-provider"/>
-                  <send-payload>true</send-payload>
-                </producer>
-
+          <producer class="jetty-standard-response-producer">
+            <status-provider class="http-configured-status">
+              <status>NOT_FOUND_404</status>
+            </status-provider>
+            <response-header-provider class="jetty-no-response-headers"/>
+            <content-type-provider class="http-configured-content-type-provider"/>
+            <send-payload>true</send-payload>
+          </producer>
         </standard-workflow>
       </workflow-list>
     </channel>
-
     <channel>
       <auto-start>true</auto-start>
       <unique-id>WebClient</unique-id>
@@ -194,7 +195,8 @@ org.jruby.embed.localcontext.scope=threadsafe
             <services>
               <service class="embedded-scripting-service">
                 <unique-id>SetMessageType</unique-id>
-                <script><![CDATA[
+                <script>
+                  <![CDATA[
                   # Select a message-type from the valid list
                   msgtype_index = rand(3);
                   msg_types = Array[ "PRODUCT_LOOKUP", "PRODUCT_MOVEMENT", "PRODUCT_RECALL" ]
@@ -205,7 +207,8 @@ org.jruby.embed.localcontext.scope=threadsafe
                   $message.addMetadata('messageType', messageType);
                   $message.setStringPayload(msg_data);
 
-                ]]></script>
+                ]]>
+                </script>
                 <language>jruby</language>
               </service>
               <generate-unique-metadata-value-service>
@@ -228,7 +231,7 @@ org.jruby.embed.localcontext.scope=threadsafe
                       <add-metadata-service>
                         <metadata-element>
                           <key>product_url</key>
-                          <value>http://localhost:8080/products/movement</value>
+                          <value>http://localhost:8082/products/movement</value>
                         </metadata-element>
                       </add-metadata-service>
                     </services>
@@ -239,7 +242,7 @@ org.jruby.embed.localcontext.scope=threadsafe
                       <add-metadata-service>
                         <metadata-element>
                           <key>product_url</key>
-                          <value>http://localhost:8080/products/recall</value>
+                          <value>http://localhost:8082/products/recall</value>
                         </metadata-element>
                       </add-metadata-service>
                     </services>
@@ -250,7 +253,7 @@ org.jruby.embed.localcontext.scope=threadsafe
                       <add-metadata-service>
                         <metadata-element>
                           <key>product_url</key>
-                          <value>http://localhost:8080/products/lookup</value>
+                          <value>http://localhost:8082/products/lookup</value>
                         </metadata-element>
                       </add-metadata-service>
                     </services>
@@ -272,6 +275,5 @@ org.jruby.embed.localcontext.scope=threadsafe
         </standard-workflow>
       </workflow-list>
     </channel>
-
   </channel-list>
 </adapter>
