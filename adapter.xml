@@ -33,6 +33,10 @@ Also, note that in the bootstrap.properties we have set the system property org.
           </consumer>
           <service-collection class="service-list">
             <services>
+              <add-logging-context-service>
+                <key>adapterUniqueId</key>
+                <value>vcs-git-instance</value>
+              </add-logging-context-service>
               <generate-unique-metadata-value-service>
                 <unique-id>GenerateUniqueMetadata</unique-id>
                 <metadata-key>ProductCode</metadata-key>
@@ -59,6 +63,9 @@ Also, note that in the bootstrap.properties we have set the system property org.
                   <send-payload>true</send-payload>
                 </producer>
               </standalone-producer>
+              <remove-logging-context-service>
+                <key>adapterUniqueId</key>
+              </remove-logging-context-service>              
             </services>
           </service-collection>
         </standard-workflow>
@@ -72,6 +79,10 @@ Also, note that in the bootstrap.properties we have set the system property org.
           </consumer>
           <service-collection class="service-list">
             <services>
+              <add-logging-context-service>
+                <key>adapterUniqueId</key>
+                <value>vcs-git-instance</value>
+              </add-logging-context-service>            
               <generate-unique-metadata-value-service>
                 <unique-id>GenerateUniqueMetadata</unique-id>
                 <metadata-key>ProductMovementTransactionId</metadata-key>
@@ -99,6 +110,9 @@ Also, note that in the bootstrap.properties we have set the system property org.
                   <send-payload>true</send-payload>
                 </producer>
               </standalone-producer>
+              <remove-logging-context-service>
+                <key>adapterUniqueId</key>
+              </remove-logging-context-service>                
             </services>
           </service-collection>
         </standard-workflow>
