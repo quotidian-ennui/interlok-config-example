@@ -307,7 +307,6 @@ Also, note that in the bootstrap.properties we have set the system property org.
                 <key>adapterUniqueId</key>
               </remove-logging-context-service>
             </services>
-            </services>
           </service-collection>
         </standard-workflow>
       </workflow-list>
