@@ -221,6 +221,11 @@ Also, note that in the bootstrap.properties we have set the system property org.
           </consumer>
           <service-collection class="service-list">
             <services>
+              <add-logging-context-service>
+                <key>adapterUniqueId</key>
+                <value>vcs-git-instance</value>
+              </add-logging-context-service>
+
               <service class="embedded-scripting-service">
                 <unique-id>SetMessageType</unique-id>
                 <script>
@@ -298,6 +303,10 @@ Also, note that in the bootstrap.properties we have set the system property org.
               <log-message-service>
                 <unique-id>LogProductRequest</unique-id>
               </log-message-service>
+              <remove-logging-context-service>
+                <key>adapterUniqueId</key>
+              </remove-logging-context-service>
+            </services>
             </services>
           </service-collection>
         </standard-workflow>
