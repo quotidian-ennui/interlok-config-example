@@ -25,6 +25,10 @@ Also, note that in the bootstrap.properties we have set the system property org.
       <workflow-list>
         <standard-workflow>
           <unique-id>HandleProductCodeLookup</unique-id>
+          <logging-context-workflow-interceptor>
+            <key>adapterUniqueId</key>
+            <value>vcs-git-instance</value>
+          </logging-context-workflow-interceptor>
           <consumer class="jetty-message-consumer">
             <destination class="configured-consume-destination">
               <destination>/products/lookup</destination>
@@ -33,10 +37,6 @@ Also, note that in the bootstrap.properties we have set the system property org.
           </consumer>
           <service-collection class="service-list">
             <services>
-              <add-logging-context-service>
-                <key>adapterUniqueId</key>
-                <value>vcs-git-instance</value>
-              </add-logging-context-service>
               <generate-unique-metadata-value-service>
                 <unique-id>GenerateUniqueMetadata</unique-id>
                 <metadata-key>ProductCode</metadata-key>
@@ -63,14 +63,15 @@ Also, note that in the bootstrap.properties we have set the system property org.
                   <send-payload>true</send-payload>
                 </producer>
               </standalone-producer>
-              <remove-logging-context-service>
-                <key>adapterUniqueId</key>
-              </remove-logging-context-service>
             </services>
           </service-collection>
         </standard-workflow>
         <standard-workflow>
           <unique-id>HandleProductMovement</unique-id>
+          <logging-context-workflow-interceptor>
+            <key>adapterUniqueId</key>
+            <value>vcs-git-instance</value>
+          </logging-context-workflow-interceptor>
           <consumer class="jetty-message-consumer">
             <destination class="configured-consume-destination">
               <destination>/products/movement</destination>
@@ -79,10 +80,6 @@ Also, note that in the bootstrap.properties we have set the system property org.
           </consumer>
           <service-collection class="service-list">
             <services>
-              <add-logging-context-service>
-                <key>adapterUniqueId</key>
-                <value>vcs-git-instance</value>
-              </add-logging-context-service>
               <generate-unique-metadata-value-service>
                 <unique-id>GenerateUniqueMetadata</unique-id>
                 <metadata-key>ProductMovementTransactionId</metadata-key>
@@ -110,14 +107,15 @@ Also, note that in the bootstrap.properties we have set the system property org.
                   <send-payload>true</send-payload>
                 </producer>
               </standalone-producer>
-              <remove-logging-context-service>
-                <key>adapterUniqueId</key>
-              </remove-logging-context-service>
             </services>
           </service-collection>
         </standard-workflow>
         <standard-workflow>
           <unique-id>HandleProductRecall</unique-id>
+          <logging-context-workflow-interceptor>
+            <key>adapterUniqueId</key>
+            <value>vcs-git-instance</value>
+          </logging-context-workflow-interceptor>
           <consumer class="jetty-message-consumer">
             <destination class="configured-consume-destination">
               <destination>/products/recall</destination>
@@ -126,10 +124,6 @@ Also, note that in the bootstrap.properties we have set the system property org.
           </consumer>
           <service-collection class="service-list">
             <services>
-              <add-logging-context-service>
-                <key>adapterUniqueId</key>
-                <value>vcs-git-instance</value>
-              </add-logging-context-service>
               <generate-unique-metadata-value-service>
                 <unique-id>GenerateUniqueMetadata</unique-id>
                 <metadata-key>ProductRecallTransactionId</metadata-key>
@@ -157,14 +151,15 @@ Also, note that in the bootstrap.properties we have set the system property org.
                   <send-payload>true</send-payload>
                 </producer>
               </standalone-producer>
-              <remove-logging-context-service>
-                <key>adapterUniqueId</key>
-              </remove-logging-context-service>
             </services>
           </service-collection>
         </standard-workflow>
         <standard-workflow>
           <unique-id>DefaultURL</unique-id>
+          <logging-context-workflow-interceptor>
+            <key>adapterUniqueId</key>
+            <value>vcs-git-instance</value>
+          </logging-context-workflow-interceptor>
           <consumer class="jetty-message-consumer">
             <destination class="configured-consume-destination">
               <destination>/products/*</destination>
@@ -173,10 +168,6 @@ Also, note that in the bootstrap.properties we have set the system property org.
           </consumer>
           <service-collection class="service-list">
             <services>
-              <add-logging-context-service>
-                <key>adapterUniqueId</key>
-                <value>vcs-git-instance</value>
-              </add-logging-context-service>
               <payload-from-metadata-service>
                 <unique-id>GenerateResult</unique-id>
                 <template>
@@ -186,9 +177,6 @@ Also, note that in the bootstrap.properties we have set the system property org.
               <log-message-service>
                 <unique-id>LogMessage</unique-id>
               </log-message-service>
-              <remove-logging-context-service>
-                <key>adapterUniqueId</key>
-              </remove-logging-context-service>
             </services>
           </service-collection>
           <producer class="jetty-standard-response-producer">
@@ -210,6 +198,10 @@ Also, note that in the bootstrap.properties we have set the system property org.
       <workflow-list>
         <standard-workflow>
           <unique-id>ProductLookup</unique-id>
+          <logging-context-workflow-interceptor>
+            <key>adapterUniqueId</key>
+            <value>vcs-git-instance</value>
+          </logging-context-workflow-interceptor>
           <consumer class="polling-trigger">
             <destination class="configured-consume-destination">
               <configured-thread-name>ProductLookup</configured-thread-name>
@@ -221,11 +213,6 @@ Also, note that in the bootstrap.properties we have set the system property org.
           </consumer>
           <service-collection class="service-list">
             <services>
-              <add-logging-context-service>
-                <key>adapterUniqueId</key>
-                <value>vcs-git-instance</value>
-              </add-logging-context-service>
-
               <service class="embedded-scripting-service">
                 <unique-id>SetMessageType</unique-id>
                 <script>
@@ -302,10 +289,7 @@ Also, note that in the bootstrap.properties we have set the system property org.
               </standalone-requestor>
               <log-message-service>
                 <unique-id>LogProductRequest</unique-id>
-              </log-message-service>
-              <remove-logging-context-service>
-                <key>adapterUniqueId</key>
-              </remove-logging-context-service>
+              </log-message-service>>
             </services>
           </service-collection>
         </standard-workflow>
