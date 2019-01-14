@@ -202,8 +202,8 @@ org.jruby.embed.localcontext.scope=threadsafe
                   messageType = msg_types.at(msgtype_index);
                   msg_data = msg_datas.at(msgtype_index);
 
-                  $message.addMetadata('messageType', messageType);
-                  $message.setStringPayload(msg_data);
+                  message.addMetadata('messageType', messageType);
+                  message.setStringPayload(msg_data);
 
                 ]]></script>
                 <language>jruby</language>
