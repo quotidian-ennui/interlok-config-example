@@ -185,7 +185,6 @@ org.jruby.embed.localcontext.scope=threadsafe
             <destination class="configured-consume-destination">
               <configured-thread-name>ProductLookup</configured-thread-name>
             </destination>
-            <template>Message triggered by ProductLookup</template>
             <poller class="quartz-cron-poller">
               <cron-expression>*/7 * * * * ?</cron-expression>
             </poller>
